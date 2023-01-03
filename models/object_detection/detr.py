@@ -11,15 +11,14 @@ class DetrDetector:
         self.processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50")
         self.model = DetrForObjectDetection.from_pretrained(
             "facebook/detr-resnet-50"
-        ).to(self.device)
-
+        ).to(self.device) # type: ignore
     def detect(self, image, threshold=0.5):
-        inputs = self.processor(images=image, return_tensors="pt").to(self.device)
+        inputs = self.processor(images=image, return_tensors="pt").to(self.device) # type: ignore
         outputs = self.model(**inputs)
 
         target_sizes = torch.tensor([image.size[::-1]])
-        results = self.processor.post_process_object_detection(
-            outputs, threshold=threshold, target_sizes=target_sizes.to(self.device)
+        results = self.processor.post_process_object_detection( # type: ignore
+            outputs, threshold=threshold, target_sizes=target_sizes.to(self.device) # type: ignore
         )[0]
 
         detections = []
@@ -27,19 +26,19 @@ class DetrDetector:
             results["scores"], results["labels"], results["boxes"]
         ):
             box = [round(i, 2) for i in box.tolist()]
-            labelname = self.model.config.id2label[label.item()]
+            labelname = self.model.config.id2label[label.item()] # type: ignore
             score = round(score.item(), 3)
             detections.append({"label": labelname, "score": score, "box": box})
 
         return detections
 
     def detect_batch(self, images, threshold=0.5):
-        inputs = self.processor(images=images, return_tensors="pt").to(self.device)
+        inputs = self.processor(images=images, return_tensors="pt").to(self.device) # type: ignore
         outputs = self.model(**inputs)
 
         target_sizes = torch.tensor([image.size[::-1] for image in images])
-        results = self.processor.post_process_object_detection(
-            outputs, threshold=threshold, target_sizes=target_sizes.to(self.device)
+        results = self.processor.post_process_object_detection( # type: ignore
+            outputs, threshold=threshold, target_sizes=target_sizes.to(self.device) # type: ignore
         )
 
         batch_detections = []
@@ -49,7 +48,7 @@ class DetrDetector:
                 results[i]["scores"], results[i]["labels"], results[i]["boxes"]
             ):
                 box = [round(i, 2) for i in box.tolist()]
-                labelname = self.model.config.id2label[label.item()]
+                labelname = self.model.config.id2label[label.item()] # type: ignore
                 score = round(score.item(), 3)
                 detections.append({"label": labelname, "score": score, "box": box})
             batch_detections.append(detections)

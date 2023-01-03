@@ -3,49 +3,54 @@
 import streamlit as st
 from PIL import Image
 import time
-import torch
 
-from models.object_detection import DetrDetector
-from utils import draw_bboxes, get_output_video
+from utils import draw_bboxes, get_output_video, get_device, get_object_detector
 
-# create a sidebar
-st.sidebar.title("Guardian AI")
+# logo
+st.sidebar.image("logo.png", use_column_width=True)
 # device selection
 device = st.sidebar.selectbox("Select the device", [None, "CPU", "GPU"])
-if device == "CPU":
-    device = torch.device("cpu")
-elif device == "GPU" and torch.cuda.is_available():
-    device = torch.device("cuda")
-else:
-    st.sidebar.error("GPU not available")
-    device = torch.device("cpu")
-
+device = get_device(device)
 # model selection
 model = st.sidebar.selectbox("Select a Object Detection model", [None, "DETR"])
-object_detector = None
-if model == "DETR":
-    object_detector = DetrDetector(device=device)
+object_detector = get_object_detector(model, device)
 
 labels = st.sidebar.multiselect(
     "Select labels",
     ["person", "car", "bicycle", "motorcycle", "bus", "truck"],
     ["person"],
-)
-threshold = st.sidebar.slider("Threshold", 0.0, 1.0, 0.5, 0.1)
+)  # select the labels to detect. default is person
+threshold = st.sidebar.slider(
+    "Threshold", 0.0, 1.0, 0.5, 0.1
+)  # select the threshold for the model. default is 0.5
 
-# load an image
-image = st.sidebar.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
-# display the image in the sidebar
-if image is not None:
-    image = Image.open(image)
-    st.sidebar.image(image, caption="Uploaded Image", use_column_width=True)
+uploaded_image = st.sidebar.file_uploader(
+    "Upload an image", type=["jpg", "png", "jpeg"]
+)
+image = st.sidebar.selectbox(
+    "Select an image",
+    [
+        None,
+        "samples/burglary_1.jpg",
+        "samples/dancing_outside_cctv.webp",
+        "samples/indoor_cctv.png",
+        "samples/person_street_walking.webp",
+        "samples/small_image_person.jpg",
+    ],
+)
+if uploaded_image is not None or image is not None:
+    if uploaded_image is not None:
+        current_image = Image.open(uploaded_image)
+    else:
+        current_image = Image.open(image)  # type: ignore
+    st.sidebar.image(current_image, caption="Uploaded Image", use_column_width=True)
     if object_detector is not None:
         st.subheader("Object Detection Output Image")
         with st.spinner("Detecting objects..."):
             image_start_time = time.time()
-            outputs = object_detector.detect(image, threshold)
+            outputs = object_detector.detect(current_image, threshold)
             outputs = [out for out in outputs if out["label"] in labels]
-            output_image = draw_bboxes(image, outputs)
+            output_image = draw_bboxes(current_image, outputs)
             image_end_time = time.time()
         st.image(output_image, caption="Output Image", use_column_width=True)
         st.write(f"**Inference time:** {image_end_time - image_start_time:.3f} seconds")

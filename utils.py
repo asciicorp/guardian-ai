@@ -1,6 +1,9 @@
 from PIL import Image, ImageDraw
 import os
 import glob
+import torch
+import streamlit as st
+from models.object_detection import DetrDetector
 
 LABELS = ["person", "car"]
 
@@ -22,10 +25,9 @@ def draw_bboxes(img, outputs):
     return img0
 
 
-from PIL import Image
-
-
-def get_output_video(video, detector, batch_size=4, labels=LABELS, threshold=0.5, fps=1):
+def get_output_video(
+    video, detector, batch_size=4, labels=LABELS, threshold=0.5, fps=1
+):
     os.system("rm -rf temp")
     os.makedirs("temp", exist_ok=True)
     os.system(f"ffmpeg -i {video} -r {fps} temp/%d.jpg")
@@ -53,3 +55,22 @@ def filter_outputs(outputs, labels):
     for output in outputs:
         filtered_outputs.append([out for out in output if out["label"] in labels])
     return filtered_outputs
+
+
+def get_device(device):
+    if device is None:
+        return None
+    elif device == "CPU":
+        return torch.device("cpu")
+    elif device == "GPU" and torch.cuda.is_available():
+        return torch.device("cuda")
+    else:
+        st.sidebar.error("GPU not available")
+        return torch.device("cpu")
+
+
+def get_object_detector(model, device):
+    object_detector = None
+    if model == "DETR":
+        object_detector = DetrDetector(device=device)
+    return object_detector
