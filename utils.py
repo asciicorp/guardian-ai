@@ -25,9 +25,9 @@ def draw_bboxes(img, outputs):
 from PIL import Image
 
 
-def get_output_video(video, detector, batch_size=4, labels=LABELS, threshold=0.5):
+def get_output_video(video, detector, batch_size=4, labels=LABELS, threshold=0.5, fps=1):
+    os.system("rm -rf temp")
     os.makedirs("temp", exist_ok=True)
-    fps = 1
     os.system(f"ffmpeg -i {video} -r {fps} temp/%d.jpg")
 
     frames = [Image.open(frame) for frame in sorted(glob.glob("temp/*.jpg"))]
