@@ -2,12 +2,13 @@
 # the video will be displayed on the main page and the output will be displayed on the main page
 import sys
 import os
+import cv2
 import subprocess
 import streamlit as st
 from PIL import Image
 import time
 
-from utils import draw_bboxes, get_output_video, get_device#, get_object_detector
+from utils import draw_bboxes, get_output_video, get_device, get_object_detector
 
 sys.path.append(os.path.normpath(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, 'controller/'))))
 from controller import Controller
@@ -104,3 +105,14 @@ if video is not None or uploaded_video is not None:
     # Stream
     command = f"ffmpeg -re -stream_loop -1 -i {current_video} -c copy -f rtsp rtsp://localhost:8554/mystream"
     subprocess.call(command, shell=True)
+
+# Read RTSP streams
+cap = cv2.VideoCapture("rtsp://localhost:8554/mystream")
+
+while(cap.isOpened()):
+    ret, frame = cap.read()
+    cv2.imshow('frame', frame)
+    if cv2.waitKey(20) & 0xFF == ord('q'):
+        break
+cap.release()
+cv2.destroyAllWindows()
