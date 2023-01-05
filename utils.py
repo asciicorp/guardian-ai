@@ -59,7 +59,7 @@ def filter_outputs(outputs, labels):
 
 def get_device(device):
     if device is None:
-        return None
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
     elif device == "CPU":
         return torch.device("cpu")
     elif device == "GPU" and torch.cuda.is_available():
@@ -70,7 +70,10 @@ def get_device(device):
 
 
 def get_object_detector(model, device):
-    object_detector = None
+    if device.type == "cpu":
+        st.sidebar.warning("Running on CPU")
+    else:
+        st.sidebar.success("Running on GPU")
     if model == "DETR":
-        object_detector = DetrDetector(device=device)
-    return object_detector
+        return DetrDetector(device=device)
+    return None
