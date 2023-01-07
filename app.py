@@ -6,26 +6,33 @@ import time
 
 from utils import draw_bboxes, get_output_video, get_device, get_object_detector
 
-st.set_page_config(page_title="GuardianAI", page_icon=":eyes:", layout="wide")
+OBJECT_DETECTION_MODELS = [None, "detr-resnet-50", "detr-resnet-101"]
+SEGMENTATION_MODELS = [None]
+DEPTH_ESTIMATION_MODELS = [None]
+POSE_ESTIMATION_MODELS = [None]
+VIDEO_ANOMALY_DETECTION_MODELS = [None]
+
+# Header
+st.set_page_config(page_title="GuardianAI DEMO", page_icon="public/icon.png")
 st.sidebar.info(
     "This is a demo app for the [GuardianAI]() project."
 )
-# logo
-st.sidebar.image("logo.png", use_column_width=True)
-# ai service selection
+st.sidebar.image("public/logo.png", use_column_width=True)
+
+# Select AI Service
 ai_service = st.sidebar.selectbox("Select an AI Service", [None, "Object Detection"])
+device = st.sidebar.selectbox("Select the device", [None, "CPU", "GPU"])
+device = get_device(device)
+
 if ai_service == "Object Detection":
-    # device selection
-    device = st.sidebar.selectbox("Select the device", [None, "CPU", "GPU"])
-    device = get_device(device)
     # model selection
-    model = st.sidebar.selectbox("Select a Object Detection model", [None, "DETR"])
+    model = st.sidebar.selectbox("Select a Object Detection model", OBJECT_DETECTION_MODELS)
     object_detector = get_object_detector(model, device)
 
     labels = st.sidebar.multiselect(
         "Select labels",
-        ["person", "car", "bicycle", "motorcycle", "bus", "truck"],
-        ["person"],
+        object_detector.get_labels() if object_detector is not None else ['person'],
+        ["person"]
     )  # select the labels to detect. default is person
     threshold = st.sidebar.slider(
         "Threshold", 0.0, 1.0, 0.5, 0.1

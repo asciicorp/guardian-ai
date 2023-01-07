@@ -74,6 +74,8 @@ def get_object_detector(model, device):
         st.sidebar.warning("Running on CPU")
     else:
         st.sidebar.success("Running on GPU")
-    if model == "DETR":
-        return DetrDetector(device=device)
+    if model == "detr-resnet-50":
+        return DetrDetector(device=device, model="detr-resnet-50")
+    elif model == "detr-resnet-101":
+        return DetrDetector(device=device, model="detr-resnet-101")
     return None
