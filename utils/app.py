@@ -28,13 +28,32 @@ def get_model(model_type, model_name, device_type):
         st.warning("Running on CPU")
     else:
         st.success("Running on GPU")
+
+    if model_type == "Object Detection":
+        model_dir = "object_detection"
+    elif model_type == "Depth Estimation":
+        model_dir = "depth_estimation"
     model = getattr(
-        importlib.import_module("models.object_detection"), model_info["model_class"]
+        importlib.import_module(f"models.{model_dir}"), model_info["model_class"]
     )(device=device, **model_info["args"])
     return model, model_info
 
 
-def get_controls(model, input_mode):
+def get_controls(model, input_mode, model_type):
+    if model_type == "Depth Estimation":
+        threshold = st.slider("Threshold", 0.0, 1.0, 0.5, 0.1)
+        if input_mode == "Video":
+            batch_size = st.slider("Batch size", 1, 16, 4, 1)
+            fps = st.slider("FPS", 1, 30, 1, 1)
+        else:
+            batch_size = 1
+            fps = 1
+        return {
+            "threshold": threshold,
+            "batch_size": batch_size,
+            "fps": fps,
+        }
+
     labels = st.multiselect(
         "Select labels",
         model.get_labels() if model is not None else ["person"],

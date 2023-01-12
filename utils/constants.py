@@ -34,6 +34,18 @@ MODELS = {
             },
         },
     ],
+
+    "Depth Estimation": [
+        {
+            "name": "dpt-large",
+            "supported_devices": ["CPU", "GPU"],
+            "description": "DPT Large",
+            "model_class": "DPTLarge",
+            "args": {
+                "model": "dpt-large",
+            },
+        },
+    ]
 }
 
 MODEL_TYPES = [None, *MODELS.keys()]
@@ -44,6 +56,10 @@ OBJECT_DETECTION_MODELS = [
     *[model["name"] for model in MODELS["Object Detection"]],
 ]
 
+DEPTH_ESTIMATION_MODELS = [
+    None,
+    *[model["name"] for model in MODELS["Depth Estimation"]],
+]
 
 def get_model_name(model_type):
     if model_type is None:
