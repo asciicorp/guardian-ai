@@ -24,6 +24,15 @@ MODELS = {
             "description": "DETR ResNet-50 (CPU Optimized)",
             "args": {},
         },
+        {
+            "name": "yolos-model",
+            "supported_devices": ["CPU", "GPU"],
+            "description": "Yolos Model",
+            "model_class": "YolosDetector",
+            "args": {
+                "model":"hustvl/yolos-tiny",
+            },
+        },
     ],
 }
 
