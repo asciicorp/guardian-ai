@@ -42,6 +42,7 @@ class DPTLarge:
       align_corners=False
     )
 
+    print(prediction.shape)
     output = prediction.squeeze().cpu().detach().numpy()
     formatted = (output * 255 / np.max(output)).astype("uint8")
     #depth = Image.fromarray(formatted)

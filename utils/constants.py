@@ -49,6 +49,16 @@ MODELS = {
                 "model": "dpt-large",
             },
         },
+        {
+            "name": "midas",
+            "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Image"],
+            "description": "MiDaS",
+            "model_class": "MiDaS",
+            "args": {
+                "model": "midas",
+            },
+        },
     ],
     "Video Anomaly Detection": [
         {
