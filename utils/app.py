@@ -33,6 +33,8 @@ def get_model(model_type, model_name, device_type):
         model_dir = "object_detection"
     elif model_type == "Depth Estimation":
         model_dir = "depth_estimation"
+    elif model_type == "Video Anomaly Detection":
+        model_dir = "video_anomaly_detection"
     model = getattr(
         importlib.import_module(f"models.{model_dir}"), model_info["model_class"]
     )(device=device, **model_info["args"])
@@ -53,6 +55,9 @@ def get_controls(model, input_mode, model_type):
             "batch_size": batch_size,
             "fps": fps,
         }
+    if model_type == "Video Anomaly Detection":
+        fps = st.slider("FPS", 1, 30, 1, 1)
+        return {"fps": fps}
 
     labels = st.multiselect(
         "Select labels",
@@ -73,12 +78,14 @@ def get_controls(model, input_mode, model_type):
         "fps": fps,
     }
 
+
 def get_image_inputs():
     uploaded_image = st.sidebar.file_uploader(
-            "Upload an image", type=["jpg", "png", "jpeg"]
-        )
+        "Upload an image", type=["jpg", "png", "jpeg"]
+    )
     image = st.sidebar.selectbox("Select an image", SAMPLE_IMAGES)
     return uploaded_image, image
+
 
 def get_video_inputs():
     uploaded_video = st.sidebar.file_uploader("Upload a video", type=["mp4"])

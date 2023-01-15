@@ -56,3 +56,6 @@ class DetrDetector:
 
         del inputs, outputs, results
         return batch_detections
+
+    def get_labels(self):
+        return self.model.config.id2label.values()

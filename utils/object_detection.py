@@ -15,7 +15,7 @@ def draw_bboxes(img, outputs, colors):
         box_h, box_w = box[2] - box[0], box[3] - box[1]
         label: str = output["label"]
         score: float = output["score"]
-        color = colors[label] if len(colors.keys()) > 1 else 'white'
+        color = colors[label] if len(colors.keys()) > 1 else "white"
         draw.rounded_rectangle(
             (box[0], box[1], box[2], box[3]),
             outline=color,
@@ -68,7 +68,7 @@ def get_output_video_od(video, detector, params):
     )
     os.system("rm -rf temp")
     video_end_time = time.time()
-    return video_end_time - video_start_time
+    return {"video" : "output.mp4"}, video_end_time - video_start_time
 
 
 def get_output_image_od(img, detector, params):

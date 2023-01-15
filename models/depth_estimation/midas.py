@@ -23,8 +23,9 @@ class MiDaS:
     # Convert to NCHW format
     input_data = [np.expand_dims(np.transpose(input, (2, 0, 1)), 0).astype(np.float32) for input in inputs]
 
-    result = [self.compiled_model(input)[self.output_layer] for input in input_data]
-    return result
+    output = np.array([self.compiled_model(input)[self.output_layer] for input in input_data]).squeeze()
+    formatted = (output * 255 / np.max(output)).astype("uint8")
+    return formatted
 
   def _resize_images(self, images):
     inputs = [np.asarray(image.resize((self.W, self.H))) for image in images]
