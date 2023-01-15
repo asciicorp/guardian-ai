@@ -26,7 +26,7 @@ def get_output_video_de(video, detector, params):
     )
     os.system("rm -rf temp")
     video_end_time = time.time()
-    return video_end_time - video_start_time
+    return {"video": "output.mp4"}, video_end_time - video_start_time
 
 
 def get_output_image_de(img, detector, params):

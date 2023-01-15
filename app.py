@@ -28,15 +28,15 @@ if model_type is not None:
     else:
         st.sidebar.error("Select a model")
         model, model_info = None, None
-
-    input_type = st.sidebar.radio("Select the Input Type", ["Image", "Video", "Stream"], horizontal=True)
-    uploaded_video, video, uploaded_image, image = None, None, None, None
-    if input_type == "Video":
-        uploaded_video, video = get_video_inputs()
-    elif input_type == "Stream":
-        st.sidebar.error("Stream not supported yet")
-    elif input_type == "Image":
-        uploaded_image, image = get_image_inputs()
+    if model_info:
+        input_type = st.sidebar.radio("Select the Input Type", model_info["supported_inputs"], horizontal=True)
+        uploaded_video, video, uploaded_image, image = None, None, None, None
+        if input_type == "Video":
+            uploaded_video, video = get_video_inputs()
+        elif input_type == "Stream":
+            st.sidebar.error("Stream not supported yet")
+        elif input_type == "Image":
+            uploaded_image, image = get_image_inputs()
 
     with st.sidebar.expander("Model Parameters"):
         if model is not None: params = get_controls(model, input_type, model_type)
@@ -48,8 +48,14 @@ if model_type is not None:
             if current_video is not None:
                 st.subheader(f"{model_type} Output Video")
                 with st.spinner("Processing..."):
-                    time_elapsed =  get_output_video(current_video, model_type, model, params)
-                st.video("output.mp4")
+                    outputs, time_elapsed =  get_output_video(current_video, model_type, model, params)
+                for output_type, output in outputs.items():
+                    if output_type == "video":
+                        st.video(output)
+                    if output_type == "image":
+                        st.image(output)
+                    if output_type == "chart":
+                        st.line_chart(output)
                 st.write(f"**Inference time:** {time_elapsed:.3f} seconds")
             else:
                 st.error("Upload or Select one of the sample videos")

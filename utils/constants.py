@@ -3,6 +3,7 @@ MODELS = {
         {
             "name": "detr-resnet-50",
             "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Image", "Video"],
             "description": "DETR ResNet-50",
             "model_class": "DetrDetector",
             "args": {
@@ -12,6 +13,7 @@ MODELS = {
         {
             "name": "detr-resnet-101",
             "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Image", "Video"],
             "description": "DETR ResNet-101",
             "model_class": "DetrDetector",
             "args": {
@@ -21,31 +23,43 @@ MODELS = {
         {
             "name": "detr-resnet-50 (CPU Optimized)",
             "supported_devices": ["CPU"],
+            "supported_inputs": ["Image", "Video"],
             "description": "DETR ResNet-50 (CPU Optimized)",
             "args": {},
         },
         {
             "name": "yolos-model",
             "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Image", "Video"],
             "description": "Yolos Model",
             "model_class": "YolosDetector",
             "args": {
-                "model":"hustvl/yolos-tiny",
+                "model": "hustvl/yolos-tiny",
             },
         },
     ],
-
     "Depth Estimation": [
         {
             "name": "dpt-large",
             "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Image", "Video"],
             "description": "DPT Large",
             "model_class": "DPTLarge",
             "args": {
                 "model": "dpt-large",
             },
         },
-    ]
+    ],
+    "Video Anomaly Detection": [
+        {
+            "name": "RFTM",
+            "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Video"],
+            "description": "RFTM",
+            "model_class": "RFTM",
+            "args": {},
+        }
+    ],
 }
 
 MODEL_TYPES = [None, *MODELS.keys()]
@@ -60,6 +74,12 @@ DEPTH_ESTIMATION_MODELS = [
     None,
     *[model["name"] for model in MODELS["Depth Estimation"]],
 ]
+
+VIDEO_ANOMALY_DETECTION_MODELS = [
+    None,
+    *[model["name"] for model in MODELS["Video Anomaly Detection"]],
+]
+
 
 def get_model_name(model_type):
     if model_type is None:
