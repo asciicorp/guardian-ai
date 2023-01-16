@@ -115,4 +115,5 @@ SAMPLE_VIDEOS = [
     "samples/Arson001_x264.mp4",
     "samples/Assault001_x264.mp4",
     "samples/Burglary001_x264.mp4",
+    "samples/Normal001_x264.mp4",
 ]

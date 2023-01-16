@@ -33,10 +33,12 @@ def get_output_video_vad(video, detector, params):
             with torch.no_grad():
                 out = detector.predict(inputs)
             y_pred.append(out.item())
-
+    os.system(
+        f"ffmpeg -r {params['fps']} -i temp/%5d.jpg -vcodec libx264 -crf 25  -pix_fmt yuv420p -y output.mp4"
+    )
     video_end_time = time.time()
     os.system("rm -rf temp")
-    return {"video": video, "chart": y_pred}, video_end_time - video_start_time
+    return {"video": "output.mp4", "chart": y_pred}, video_end_time - video_start_time
 
 
 class ToTensor(object):
