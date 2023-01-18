@@ -37,6 +37,16 @@ MODELS = {
                 "model": "hustvl/yolos-tiny",
             },
         },
+        {
+            "name": "yolo-v7",
+            "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Image", "Video"],
+            "description": "YoloV7 Model",
+            "model_class": "YoloV7",
+            "args": {
+                "model": "yolo-v7",
+            },
+        },
     ],
     "Depth Estimation": [
         {
