@@ -35,7 +35,7 @@ def draw_bboxes(img, outputs, colors):
     return img0
 
 
-def get_output_video_od(video, detector, params):
+def get_output_video_od(video, detector, model_name, params):
     video_start_time = time.time()
     os.system("rm -rf temp")
     os.makedirs("temp", exist_ok=True)
@@ -44,24 +44,35 @@ def get_output_video_od(video, detector, params):
     frames = [Image.open(frame) for frame in sorted(glob.glob("temp/*.jpg"))]
     outputs = []
     colors = {}
-    for label in params["labels"]:
-        colors[label] = (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255),
-        )
-    for i in range(0, len(frames), params["batch_size"]):
-        filtered_outputs = filter_outputs(
-            detector.detect_batch(
-                frames[i : i + params["batch_size"]], params["threshold"]
-            ),
-            params["labels"],
-        )
-        outputs.extend(filtered_outputs)
+    if model_name == "yolov8n":
+        for i in range(0, len(frames), params["batch_size"]):
+            filtered_outputs = detector.detect_batch(frames[i : i + params["batch_size"]])
+            outputs.extend(filtered_outputs)
 
-    for i, frame in enumerate(sorted(glob.glob("temp/*.jpg"))):
-        frame0 = draw_bboxes(frames[i], outputs[i], colors)
-        frame0.save(frame)
+        for i, frame in enumerate(sorted(glob.glob("temp/*.jpg"))):
+            frame0 = outputs[i]
+            frame0 = Image.fromarray(frame0)
+            frame0.save(frame)
+
+    else:
+        for label in params["labels"]:
+            colors[label] = (
+                random.randint(0, 255),
+                random.randint(0, 255),
+                random.randint(0, 255),
+            )
+        for i in range(0, len(frames), params["batch_size"]):
+            filtered_outputs = filter_outputs(
+                detector.detect_batch(
+                    frames[i : i + params["batch_size"]], params["threshold"]
+                ),
+                params["labels"],
+            )
+            outputs.extend(filtered_outputs)
+
+        for i, frame in enumerate(sorted(glob.glob("temp/*.jpg"))):
+            frame0 = draw_bboxes(frames[i], outputs[i], colors)
+            frame0.save(frame)
 
     os.system(
         f"ffmpeg -r {params['fps']} -i temp/%d.jpg -vcodec libx264 -crf 25  -pix_fmt yuv420p -y output.mp4"
@@ -70,10 +81,10 @@ def get_output_video_od(video, detector, params):
     video_end_time = time.time()
     return {"video" : "output.mp4"}, video_end_time - video_start_time
 
-def get_output_image_od(img, detector, params):
+def get_output_image_od(img, detector, model_name, params):
     img_start_time = time.time()
     outputs = detector.detect_batch([img], params["threshold"])
-    if detector == "yolov8":
+    if model_name == "yolov8n":
         img_end_time = time.time()
         return outputs, img_end_time - img_start_time
     else:
