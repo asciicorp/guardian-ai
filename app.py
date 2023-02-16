@@ -22,11 +22,13 @@ if model_type is not None:
     model_name = st.sidebar.selectbox(
         f"Select a {model_type} model", get_model_name(model_type)
     )
+
     if model_name is not None and device_type is not None:
         model, model_info = get_model(model_type, model_name, device_type)
     else:
         st.sidebar.error("Select a model")
         model, model_info = None, None
+
     if model_info:
         input_type = st.sidebar.radio(
             "Select the Input Type", model_info["supported_inputs"], horizontal=True

@@ -70,22 +70,24 @@ def get_output_video_od(video, detector, params):
     video_end_time = time.time()
     return {"video" : "output.mp4"}, video_end_time - video_start_time
 
-
 def get_output_image_od(img, detector, params):
     img_start_time = time.time()
     outputs = detector.detect_batch([img], params["threshold"])
-    filtered_outputs = filter_outputs(outputs, params["labels"])
-    colors = {}
-    for label in params["labels"]:
-        colors[label] = (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255),
-        )
-    img0 = draw_bboxes(img, filtered_outputs[0], colors)
-    img_end_time = time.time()
-    return img0, img_end_time - img_start_time
-
+    if detector == "yolov8":
+        img_end_time = time.time()
+        return outputs, img_end_time - img_start_time
+    else:
+        filtered_outputs = filter_outputs(outputs, params["labels"])
+        colors = {}
+        for label in params["labels"]:
+            colors[label] = (
+                random.randint(0, 255),
+                random.randint(0, 255),
+                random.randint(0, 255),
+            )
+        img0 = draw_bboxes(img, filtered_outputs[0], colors)
+        img_end_time = time.time()
+        return img0, img_end_time - img_start_time
 
 def filter_outputs(outputs, labels):
     filtered_outputs = []

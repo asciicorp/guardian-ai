@@ -30,6 +30,16 @@ MODELS = {
                 "model": "hustvl/yolos-tiny",
             },
         },
+        {
+            "name": "yolov8n",
+            "supported_devices": ["CPU", "GPU"],
+            "supported_inputs": ["Image", "Video"],
+            "description": "YOLO-v8 is a real-time object detection model designed for smaller objects and scenes, it is a smaller version of YOLOv3 model and uses a smaller backbone model and fewer layers. It is suitable for resource-constrained devices and can achieve a good balance between speed and accuracy. It can detect 80 classes of objects and detect smaller objects more accurately than YOLOv3-tiny model.It is a novel model that was introduced in the paper ['YOLO-S: A Small and Accurate Object Detector'](https://arxiv.org/abs/1909.13294)",
+            "model_class": "YOLOv8",
+            "args": {
+                "model": "yolov8",
+            },
+        },
     ],
     "Depth Estimation": [
         {
