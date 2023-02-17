@@ -11,6 +11,7 @@ from ultralytics.yolo.utils.plotting import colors
 #from ultralytics import YOLO
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath("models/object_detection/yolov8n"))
+SCRIPT_DIR_SEG = os.path.dirname(os.path.abspath("models/object_detection/yolov8n-seg"))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 # custom labels. there is no other way since streamlit issuing thread error or import YOLO
@@ -19,7 +20,10 @@ label_map = {0: 'person', 1: 'bicycle', 2: 'car', 3: 'motorcycle', 4: 'airplane'
 class YOLOv8:
   def __init__(self, device=None, model="yolov8"):
     ie = Core()
-    model_xml = f"{SCRIPT_DIR}/yolov8n/yolov8n.xml"
+    if model == "yolov8":
+      model_xml = f"{SCRIPT_DIR}/yolov8n/yolov8n.xml"
+    else:
+      model_xml = f"{SCRIPT_DIR}/yolov8n-seg/yolov8n-seg.xml"
     model = ie.read_model(model=model_xml)
     """
     if device is None:

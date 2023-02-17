@@ -29,7 +29,7 @@ def get_model(model_type, model_name, device_type):
     else:
         st.success("Running on GPU")
 
-    if model_type == "Object Detection":
+    if model_type == "Object Detection" or model_type == "Segmentation":
         model_dir = "object_detection"
     elif model_type == "Depth Estimation":
         model_dir = "depth_estimation"

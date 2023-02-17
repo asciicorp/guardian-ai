@@ -44,7 +44,7 @@ def get_output_video_od(video, detector, model_name, params):
     frames = [Image.open(frame) for frame in sorted(glob.glob("temp/*.jpg"))]
     outputs = []
     colors = {}
-    if model_name == "yolov8n":
+    if model_name == "yolov8n" or model_name == "yolov8n-seg":
         for i in range(0, len(frames), params["batch_size"]):
             filtered_outputs = detector.detect_batch(frames[i : i + params["batch_size"]])
             outputs.extend(filtered_outputs)
@@ -84,7 +84,7 @@ def get_output_video_od(video, detector, model_name, params):
 def get_output_image_od(img, detector, model_name, params):
     img_start_time = time.time()
     outputs = detector.detect_batch([img], params["threshold"])
-    if model_name == "yolov8n":
+    if model_name == "yolov8n" or model_name == "yolov8n-seg":
         img_end_time = time.time()
         return outputs, img_end_time - img_start_time
     else:
