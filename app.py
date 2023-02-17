@@ -22,11 +22,13 @@ if model_type is not None:
     model_name = st.sidebar.selectbox(
         f"Select a {model_type} model", get_model_name(model_type)
     )
+
     if model_name is not None and device_type is not None:
         model, model_info = get_model(model_type, model_name, device_type)
     else:
         st.sidebar.error("Select a model")
         model, model_info = None, None
+
     if model_info:
         input_type = st.sidebar.radio(
             "Select the Input Type", model_info["supported_inputs"], horizontal=True
@@ -54,7 +56,7 @@ if model_type is not None:
                 st.subheader(f"{model_type} Output Video")
                 with st.spinner("Processing..."):
                     outputs, time_elapsed = get_output_video(
-                        current_video, model_type, model, params
+                        current_video, model_type, model, model_name, params
                     )
                 for output_type, output in outputs.items():
                     if output_type == "video":
@@ -78,7 +80,7 @@ if model_type is not None:
                 st.subheader(f"{model_type} Output Image")
                 with st.spinner("Processing..."):
                     output_image, time_elapsed = get_output_image(
-                        current_image, model_type, model, params
+                        current_image, model_type, model, model_name, params
                     )
                 st.image(output_image)
                 st.write(f"**Inference time:** {time_elapsed:.3f} seconds")

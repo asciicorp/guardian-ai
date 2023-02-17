@@ -29,7 +29,7 @@ def get_model(model_type, model_name, device_type):
     else:
         st.success("Running on GPU")
 
-    if model_type == "Object Detection":
+    if model_type == "Object Detection" or model_type == "Segmentation":
         model_dir = "object_detection"
     elif model_type == "Depth Estimation":
         model_dir = "depth_estimation"
@@ -59,11 +59,14 @@ def get_controls(model, input_mode, model_type):
         fps = st.slider("FPS", 1, 30, 1, 1)
         return {"fps": fps}
 
+    """
     labels = st.multiselect(
         "Select labels",
         model.get_labels() if model is not None else ["person"],
         ["person"],
     )
+    """
+    labels = None
     threshold = st.slider("Threshold", 0.0, 1.0, 0.5, 0.1)
     if input_mode == "Video":
         batch_size = st.slider("Batch size", 1, 16, 4, 1)

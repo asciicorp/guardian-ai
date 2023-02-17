@@ -7,7 +7,7 @@ class YolosDetector:
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
             self.device = device
-        
+
         self.feature_extractor = AutoFeatureExtractor.from_pretrained("hustvl/yolos-tiny")
         self.model = AutoModelForObjectDetection.from_pretrained("hustvl/yolos-tiny").to(self.device)
 
@@ -49,10 +49,9 @@ class YolosDetector:
                 score = round(score.item(), 3)
                 detections.append({"label": labelname, "score": score, "box": box})
             batch_detections.append(detections)
-        
+
         del inputs, outputs, results
         return batch_detections
-        
+
     def get_labels(self):
         return self.model.config.id2label.values()
-
